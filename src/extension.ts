@@ -1,27 +1,25 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
+import * as http from 'http';
 
 let currentPanel: vscode.WebviewPanel | undefined = undefined;
 
 export function activate(context: vscode.ExtensionContext) {
-  // Auto-trigger when saving Python files
   vscode.workspace.onDidSaveTextDocument((document) => {
     if (document.languageId === 'python') {
       openDashboard(context);
     }
   });
 
-  // Command to open the dashboard with current code
-  let disposable = vscode.commands.registerCommand('abcode.openDashboard', () => {
+  const disposable = vscode.commands.registerCommand('abcode.openDashboard', () => {
     openDashboard(context);
   });
 
   context.subscriptions.push(disposable);
 }
 
-function openDashboard(context: vscode.ExtensionContext) {
-  // Get the active text editor
+async function openDashboard(context: vscode.ExtensionContext) {
   const editor = vscode.window.activeTextEditor;
 
   if (!editor) {
@@ -29,74 +27,51 @@ function openDashboard(context: vscode.ExtensionContext) {
     return;
   }
 
-  // Get the code from the active editor
   const code = editor.document.getText();
   const language = editor.document.languageId;
   const fileName = path.basename(editor.document.fileName);
 
-  // Create or show the webview panel
+  // Try detecting if the Vite dev server is running
+  const devServerRunning = await isDevServerRunning('http://localhost:5173');
+
+  const panelOptions: vscode.WebviewPanelOptions & vscode.WebviewOptions = {
+    enableScripts: true,
+    retainContextWhenHidden: true,
+    localResourceRoots: [vscode.Uri.file(path.join(context.extensionPath, 'media', 'dist'))],
+  };
+
   if (currentPanel) {
     currentPanel.reveal(vscode.ViewColumn.Beside);
-    // Send the new code to the existing panel
-    currentPanel.webview.postMessage({
-      type: 'updateCode',
-      code: code,
-      language: language,
-      fileName: fileName
-    });
   } else {
     currentPanel = vscode.window.createWebviewPanel(
       'abcodeDashboard',
       'ABCode Dashboard',
       vscode.ViewColumn.Beside,
-      {
-        enableScripts: true,
-        localResourceRoots: [
-          vscode.Uri.file(path.join(context.extensionPath, 'media', 'dist'))
-        ],
-        retainContextWhenHidden: true
-      }
+      panelOptions
     );
 
-    // Set the HTML content
-    currentPanel.webview.html = getWebviewContent(context, currentPanel.webview);
+    if (devServerRunning) {
+      // Load live dev server (for debugging)
+      currentPanel.webview.html = getDevServerHtml();
+    } else {
+      // Load built files (for production)
+      currentPanel.webview.html = getWebviewContent(context, currentPanel.webview);
+    }
 
-    // Listen for messages from the webview
-    currentPanel.webview.onDidReceiveMessage(
-      message => {
-        if (message.type === 'webviewReady') {
-          // Webview is ready, send the code now
-          currentPanel?.webview.postMessage({
-            type: 'updateCode',
-            code: code,
-            language: language,
-            fileName: fileName
-          });
-        }
-      },
-      undefined,
-      context.subscriptions
-    );
-
-    // Fallback: also send after delay in case ready message is missed
-    setTimeout(() => {
-      currentPanel?.webview.postMessage({
-        type: 'updateCode',
-        code: code,
-        language: language,
-        fileName: fileName
-      });
-    }, 1000);
-
-    // Reset when the panel is closed
-    currentPanel.onDidDispose(
-      () => {
-        currentPanel = undefined;
-      },
-      null,
-      context.subscriptions
-    );
+    currentPanel.onDidDispose(() => {
+      currentPanel = undefined;
+    });
   }
+
+  // Send data after short delay
+  setTimeout(() => {
+    currentPanel?.webview.postMessage({
+      type: 'updateCode',
+      code,
+      language,
+      fileName
+    });
+  }, 800);
 }
 
 function getWebviewContent(context: vscode.ExtensionContext, webview: vscode.Webview): string {
@@ -105,21 +80,50 @@ function getWebviewContent(context: vscode.ExtensionContext, webview: vscode.Web
 
   let html = fs.readFileSync(indexPath, 'utf-8');
 
-  // Convert file paths to webview URIs
-  const scriptRegex = /<script[^>]+src="([^"]+)"[^>]*><\/script>/g;
-  const linkRegex = /<link[^>]+href="([^"]+)"[^>]*>/g;
-
-  html = html.replace(scriptRegex, (match, src) => {
-    const scriptUri = webview.asWebviewUri(vscode.Uri.file(path.join(distPath, src)));
-    return match.replace(src, scriptUri.toString());
+  // Fix script and CSS paths
+  html = html.replace(/(src|href)="(.+?)"/g, (match, attr, filePath) => {
+    const fileUri = webview.asWebviewUri(vscode.Uri.file(path.join(distPath, filePath)));
+    return `${attr}="${fileUri}"`;
   });
 
-  html = html.replace(linkRegex, (match, href) => {
-    const linkUri = webview.asWebviewUri(vscode.Uri.file(path.join(distPath, href)));
-    return match.replace(href, linkUri.toString());
-  });
+  // Add CSP to allow scripts
+  const csp = `
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; 
+    img-src ${webview.cspSource} https: data:; 
+    script-src ${webview.cspSource}; 
+    style-src ${webview.cspSource} 'unsafe-inline';">`;
+
+  html = html.replace('</head>', `${csp}</head>`);
 
   return html;
+}
+
+function getDevServerHtml(): string {
+  // Loads the Vite dev server directly
+  return `
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8" />
+      <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline' 'unsafe-eval' data: blob:;">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>ABCode (Dev Mode)</title>
+    </head>
+    <body style="margin:0;padding:0;overflow:hidden">
+      <iframe src="http://localhost:5173" frameborder="0" style="width:100%;height:100vh;"></iframe>
+    </body>
+    </html>
+  `;
+}
+
+async function isDevServerRunning(url: string): Promise<boolean> {
+  return new Promise((resolve) => {
+    const req = http.get(url, (res) => {
+      resolve(res.statusCode === 200);
+    });
+    req.on('error', () => resolve(false));
+    req.end();
+  });
 }
 
 export function deactivate() {}

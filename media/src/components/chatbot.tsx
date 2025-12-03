@@ -67,7 +67,18 @@ export default function Chatbot() {
               >
                 {message.sender === 'bot' && (
                   <div className="flex items-center gap-2 mb-1">
-                    <Bot className="w-4 h-4 text-purple-600" />
+                    <img
+                      src="/chatbot-logo.png"
+                      alt="ABCode AI"
+                      className="w-4 h-4 object-contain"
+                      onError={(e) => {
+                        // Fallback to Bot icon if image not found
+                        e.currentTarget.style.display = 'none';
+                        const fallback = e.currentTarget.nextElementSibling as HTMLElement;
+                        if (fallback) fallback.style.display = 'block';
+                      }}
+                    />
+                    <Bot className="w-4 h-4 text-purple-600" style={{ display: 'none' }} />
                     <span className="text-xs font-semibold text-purple-600">ABCode AI</span>
                   </div>
                 )}

@@ -169,3 +169,66 @@ export const mockProgressData = [
   { date: "2025-10-01", errors: 5 },
   { date: "2025-11-01", errors: 3 },
 ];
+
+export const mockMonthlyErrorBreakdown = [
+  {
+    month: "July 2025",
+    categories: {
+      "Brackets": 4,
+      "Commas": 2,
+      "Indentation": 1,
+      "Case & Spelling": 3,
+      "Missing/Wrong Colon": 2,
+      "Reversed Words": 0,
+    },
+    total: 12,
+  },
+  {
+    month: "August 2025",
+    categories: {
+      "Brackets": 3,
+      "Commas": 2,
+      "Indentation": 0,
+      "Case & Spelling": 2,
+      "Missing/Wrong Colon": 2,
+      "Reversed Words": 0,
+    },
+    total: 9,
+  },
+  {
+    month: "September 2025",
+    categories: {
+      "Brackets": 2,
+      "Commas": 1,
+      "Indentation": 0,
+      "Case & Spelling": 2,
+      "Missing/Wrong Colon": 2,
+      "Reversed Words": 0,
+    },
+    total: 7,
+  },
+  {
+    month: "October 2025",
+    categories: {
+      "Brackets": 2,
+      "Commas": 0,
+      "Indentation": 0,
+      "Case & Spelling": 1,
+      "Missing/Wrong Colon": 2,
+      "Reversed Words": 0,
+    },
+    total: 5,
+  },
+  {
+    month: "November 2025",
+    categories: {
+      "Brackets": 1,
+      "Commas": 0,
+      "Indentation": 0,
+      "Case & Spelling": 1,
+      "Missing/Wrong Colon": 1,
+      "Reversed Words": 0,
+    },
+    total: 3,
+  },
+];

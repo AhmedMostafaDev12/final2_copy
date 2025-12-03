@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Bot, Mail, Lock, User } from 'lucide-react';
+import { Mail, Lock, User, Bot } from 'lucide-react';
 
 interface LoginPageProps {
   onLogin: () => void;
@@ -19,39 +18,62 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
   };
 
   return (
-    <div className="min-h-screen bg-light-bg dark:bg-dark-bg transition-colors duration-300 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-light-bg dark:bg-dark-bg transition-colors duration-300 flex items-center justify-center px-4 relative overflow-hidden">
       {/* Background decorative elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-20 w-96 h-96 bg-accent-teal/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-20 right-20 w-96 h-96 bg-accent-cyan/5 rounded-full blur-3xl" />
+        <div
+          className="absolute top-20 left-20 w-96 h-96 bg-accent-teal/10 rounded-full blur-3xl"
+        />
+        <div
+          className="absolute bottom-20 right-20 w-96 h-96 bg-accent-cyan/10 rounded-full blur-3xl"
+        />
+        <div
+          className="absolute top-1/2 left-1/2 w-96 h-96 bg-accent-purple/5 rounded-full blur-3xl"
+        />
       </div>
 
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
+      <div
         className="relative z-10 w-full max-w-md"
       >
         {/* Logo and Title */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.1 }}
+        <div
           className="text-center mb-8"
         >
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-accent-teal rounded-2xl mb-4 shadow-glow">
-            <Bot className="w-9 h-9 text-white" />
+          <div
+            className="inline-flex items-center justify-center mb-4"
+          >
+            {/* Try to load custom logo, fallback to Bot icon if not found */}
+            <img
+              src="/logo.png"
+              alt="ABCode Logo"
+              className="w-32 h-32 object-contain"
+              onError={(e) => {
+                // If logo.png doesn't exist, hide image and show Bot icon instead
+                e.currentTarget.style.display = 'none';
+                const fallback = e.currentTarget.nextElementSibling as HTMLElement;
+                if (fallback) fallback.style.display = 'flex';
+              }}
+            />
+            <div className="flex items-center justify-center" style={{ display: 'none' }}>
+              <Bot className="w-16 h-16 text-accent-teal" />
+            </div>
           </div>
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-text-primary mb-2">ABCode</h1>
-          <p className="text-gray-600 dark:text-text-secondary">AI-Powered Code Analysis</p>
-        </motion.div>
+          <h1
+            className="text-4xl font-bold text-gray-900 dark:text-text-primary mb-2"
+            style={{ fontFamily: "'Orbitron', sans-serif", letterSpacing: '0.05em', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.1em' }}
+          >
+            <span>ABCod</span>
+            <span style={{ display: 'inline-flex', flexDirection: 'column', gap: '0.18em', width: '0.55em', height: '0.78em', justifyContent: 'center' }}>
+              <span style={{ height: '0.09em', width: '100%', backgroundColor: 'currentColor', borderRadius: '0.02em' }}></span>
+              <span style={{ height: '0.09em', width: '100%', backgroundColor: 'currentColor', borderRadius: '0.02em' }}></span>
+              <span style={{ height: '0.09em', width: '100%', backgroundColor: 'currentColor', borderRadius: '0.02em' }}></span>
+            </span>
+          </h1>
+        </div>
 
         {/* Login/Signup Card */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="bg-light-surface dark:bg-dark-surface border border-light-border dark:border-dark-border rounded-2xl shadow-2xl overflow-hidden"
+        <div
+          className="bg-light-surface dark:bg-dark-surface border-2 border-light-border dark:border-dark-border rounded-none shadow-2xl overflow-hidden hover:border-accent-teal/30 transition-all"
         >
           {/* Tab Switcher */}
           <div className="flex border-b border-light-border dark:border-dark-border">
@@ -79,11 +101,8 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="p-8">
-            <motion.div
+            <div
               key={isLogin ? 'login' : 'signup'}
-              initial={{ opacity: 0, x: isLogin ? -20 : 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.3 }}
               className="space-y-5"
             >
               {!isLogin && (
@@ -91,14 +110,14 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
                   <label className="block text-sm font-medium text-gray-600 dark:text-text-secondary mb-2">
                     Full Name
                   </label>
-                  <div className="relative">
-                    <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500 dark:text-text-tertiary" />
+                  <div className="relative group">
+                    <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500 dark:text-text-tertiary group-focus-within:text-accent-teal transition-colors" />
                     <input
                       type="text"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       placeholder="Enter your name"
-                      className="w-full bg-light-elevated dark:bg-dark-elevated border border-light-border dark:border-dark-border rounded-lg pl-12 pr-4 py-3 text-gray-900 dark:text-text-primary placeholder-text-tertiary focus:outline-none focus:border-accent-teal focus:ring-2 focus:ring-accent-teal/20 transition-all"
+                      className="w-full bg-light-elevated dark:bg-dark-elevated border-2 border-light-border dark:border-dark-border rounded-lg pl-12 pr-4 py-3 text-gray-900 dark:text-text-primary placeholder-text-tertiary focus:outline-none focus:border-accent-teal transition-all"
                     />
                   </div>
                 </div>
@@ -108,14 +127,14 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
                 <label className="block text-sm font-medium text-gray-600 dark:text-text-secondary mb-2">
                   Email Address
                 </label>
-                <div className="relative">
-                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500 dark:text-text-tertiary" />
+                <div className="relative group">
+                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500 dark:text-text-tertiary group-focus-within:text-accent-teal transition-colors" />
                   <input
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="your@email.com"
-                    className="w-full bg-light-elevated dark:bg-dark-elevated border border-light-border dark:border-dark-border rounded-lg pl-12 pr-4 py-3 text-gray-900 dark:text-text-primary placeholder-text-tertiary focus:outline-none focus:border-accent-teal focus:ring-2 focus:ring-accent-teal/20 transition-all"
+                    className="w-full bg-light-elevated dark:bg-dark-elevated border-2 border-light-border dark:border-dark-border rounded-lg pl-12 pr-4 py-3 text-gray-900 dark:text-text-primary placeholder-text-tertiary focus:outline-none focus:border-accent-teal transition-all"
                   />
                 </div>
               </div>
@@ -124,14 +143,14 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
                 <label className="block text-sm font-medium text-gray-600 dark:text-text-secondary mb-2">
                   Password
                 </label>
-                <div className="relative">
-                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500 dark:text-text-tertiary" />
+                <div className="relative group">
+                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500 dark:text-text-tertiary group-focus-within:text-accent-teal transition-colors" />
                   <input
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••"
-                    className="w-full bg-light-elevated dark:bg-dark-elevated border border-light-border dark:border-dark-border rounded-lg pl-12 pr-4 py-3 text-gray-900 dark:text-text-primary placeholder-text-tertiary focus:outline-none focus:border-accent-teal focus:ring-2 focus:ring-accent-teal/20 transition-all"
+                    className="w-full bg-light-elevated dark:bg-dark-elevated border-2 border-light-border dark:border-dark-border rounded-lg pl-12 pr-4 py-3 text-gray-900 dark:text-text-primary placeholder-text-tertiary focus:outline-none focus:border-accent-teal transition-all"
                   />
                 </div>
               </div>
@@ -151,28 +170,23 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
                 </div>
               )}
 
-              <motion.button
-                whileHover={{ scale: 1.02, boxShadow: '0 0 30px rgba(77, 184, 168, 0.25)' }}
-                whileTap={{ scale: 0.98 }}
+              <button
                 type="submit"
-                className="w-full bg-accent-teal text-white font-semibold py-3 rounded-lg shadow-glow transition-all"
+                className="w-full bg-accent-teal text-white font-semibold py-3 rounded-lg shadow-glowTeal transition-all hover:bg-accent-cyan"
               >
                 {isLogin ? 'Sign In' : 'Create Account'}
-              </motion.button>
-            </motion.div>
+              </button>
+            </div>
           </form>
-        </motion.div>
+        </div>
 
         {/* Footer */}
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.4 }}
+        <p
           className="text-center mt-6 text-gray-500 dark:text-text-tertiary text-sm"
         >
           By continuing, you agree to our Terms of Service and Privacy Policy
-        </motion.p>
-      </motion.div>
+        </p>
+      </div>
     </div>
   );
 }

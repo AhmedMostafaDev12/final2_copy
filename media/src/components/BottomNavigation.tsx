@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Bot, User, MessageCircle, TrendingUp } from 'lucide-react';
+import { Bug, User, MessageCircle, TrendingUp } from 'lucide-react';
 
 type Page = 'analysis' | 'chatbot' | 'progress' | 'profile';
 
@@ -16,7 +16,7 @@ export default function BottomNavigation({ currentPage, onNavigate }: BottomNavi
     {
       id: 'analysis' as Page,
       label: 'Analysis',
-      icon: Bot,
+      icon: Bug,
       preview: 'View code analysis, errors, and AI recommendations',
       color: 'accent-teal',
     },
@@ -119,7 +119,7 @@ export default function BottomNavigation({ currentPage, onNavigate }: BottomNavi
       <motion.div
         initial={{ y: 100 }}
         animate={{ y: 0 }}
-        className="bg-dark-surface/95 backdrop-blur-lg border-t border-dark-border shadow-2xl"
+        className="bg-dark-surface/95 backdrop-blur-lg border-t border-dark-border shadow-2xl shadow-glowTeal"
       >
         <div className="max-w-md mx-auto px-4 py-3">
           <div className="flex items-center justify-around gap-2">
@@ -137,8 +137,8 @@ export default function BottomNavigation({ currentPage, onNavigate }: BottomNavi
                   whileTap={{ scale: 0.95 }}
                   className={`relative flex flex-col items-center gap-1 px-6 py-3 rounded-xl transition-all ${
                     isActive
-                      ? 'bg-accent-teal shadow-glow'
-                      : 'hover:bg-dark-elevated'
+                      ? 'bg-accent-teal shadow-glowTeal'
+                      : 'hover:bg-dark-elevated hover:shadow-glow'
                   }`}
                 >
                   {/* Active Indicator */}

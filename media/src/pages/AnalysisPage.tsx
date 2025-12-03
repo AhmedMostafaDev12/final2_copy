@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Code, AlertCircle, CheckCircle, Lightbulb, TrendingUp, Award, Bot, CheckSquare, ChevronDown, ChevronRight } from 'lucide-react';
-import { mockCodeSample, mockCorrectedCode, mockErrors, mockRecommendations, mockHistory } from '../data/mockData';
+import { AlertCircle, CheckCircle, Lightbulb, CheckSquare, ChevronDown, ChevronRight } from 'lucide-react';
+import { mockCodeSample, mockCorrectedCode, mockErrors, mockRecommendations } from '../data/mockData';
 import SecurityAlert from '../components/SecurityAlert';
 
 interface CodeData {
@@ -34,9 +34,6 @@ export default function AnalysisPage({ codeData }: AnalysisPageProps) {
 
   // Calculate stats
   const totalErrors = mockErrors.reduce((sum, error) => sum + error.count, 0);
-  const totalAnalyses = mockHistory.length;
-  const totalErrorsHistory = mockHistory.reduce((sum, item) => sum + item.total_errors, 0);
-  const avgErrors = (totalErrorsHistory / totalAnalyses).toFixed(1);
 
   return (
     <div className="min-h-screen bg-light-bg dark:bg-dark-bg pb-24 px-4 pt-8 transition-colors duration-300">
@@ -48,41 +45,6 @@ export default function AnalysisPage({ codeData }: AnalysisPageProps) {
           className="mb-8"
         >
           <h1 className="text-3xl font-bold text-gray-900 dark:text-text-primary mb-6">Code Analysis</h1>
-
-          {/* Stats Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ delay: 0.1 }}
-              className="bg-light-surface dark:bg-dark-surface border border-light-border dark:border-dark-border rounded-xl p-5 hover:border-accent-teal transition-all shadow-lg"
-            >
-              <div className="flex items-center justify-between mb-3">
-                <div className="w-12 h-12 bg-accent-teal/10 rounded-lg flex items-center justify-center">
-                  <Bot className="w-6 h-6 text-accent-teal" />
-                </div>
-                <span className="text-3xl font-bold text-gray-900 dark:text-text-primary">{totalAnalyses}</span>
-              </div>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-text-primary mb-1">Total Analyses</h3>
-              <p className="text-gray-600 dark:text-text-secondary text-sm">Code reviews completed</p>
-            </motion.div>
-
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ delay: 0.2 }}
-              className="bg-light-surface dark:bg-dark-surface border border-light-border dark:border-dark-border rounded-xl p-5 hover:border-accent-cyan transition-all shadow-lg"
-            >
-              <div className="flex items-center justify-between mb-3">
-                <div className="w-12 h-12 bg-accent-cyan/10 rounded-lg flex items-center justify-center">
-                  <TrendingUp className="w-6 h-6 text-accent-cyan" />
-                </div>
-                <span className="text-3xl font-bold text-gray-900 dark:text-text-primary">{avgErrors}</span>
-              </div>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-text-primary mb-1">Avg Errors</h3>
-              <p className="text-gray-600 dark:text-text-secondary text-sm">Per analysis session</p>
-            </motion.div>
-          </div>
 
           {/* Current File Info */}
           {codeData && (
@@ -106,17 +68,20 @@ export default function AnalysisPage({ codeData }: AnalysisPageProps) {
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.1 }}
-          className="bg-light-surface dark:bg-dark-surface border border-light-border dark:border-dark-border rounded-xl overflow-hidden shadow-lg mb-6"
+          whileHover={{ scale: 1.01 }}
+          className="bg-light-surface dark:bg-dark-surface border-2 border-light-border dark:border-dark-border rounded-xl overflow-hidden shadow-lg mb-6 hover:border-accent-green transition-all"
         >
           <div className="bg-accent-green px-4 py-3 flex items-center gap-2">
-            <CheckSquare className="w-5 h-5 text-white" />
+            <div>
+              <CheckSquare className="w-5 h-5 text-white" />
+            </div>
             <h2 className="text-lg font-semibold text-white">Corrected Code</h2>
           </div>
 
           <div className="p-6">
             <SecurityAlert />
             <div className="bg-dark-elevated dark:bg-dark-elevated bg-light-elevated border border-accent-green/30 rounded-lg p-4 overflow-x-auto">
-              <pre className="text-sm font-mono text-gray-900 dark:text-text-primary leading-relaxed">
+              <pre className="text-sm text-gray-900 dark:text-text-primary leading-relaxed" style={{ fontFamily: '"Fira Code", "JetBrains Mono", "Source Code Pro", "Roboto Mono", Consolas, Monaco, monospace' }}>
                 {codeData ? (
                   // Show actual saved code when available
                   correctedCode
@@ -143,11 +108,14 @@ export default function AnalysisPage({ codeData }: AnalysisPageProps) {
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.2 }}
-          className="bg-light-surface dark:bg-dark-surface border border-light-border dark:border-dark-border rounded-xl overflow-hidden shadow-lg mb-6"
+          whileHover={{ scale: 1.01 }}
+          className="bg-light-surface dark:bg-dark-surface border-2 border-light-border dark:border-dark-border rounded-xl overflow-hidden shadow-lg mb-6 hover:border-accent-teal transition-all"
         >
           <div className="bg-accent-teal px-4 py-3 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <AlertCircle className="w-5 h-5 text-white" />
+              <div>
+                <AlertCircle className="w-5 h-5 text-white" />
+              </div>
               <h2 className="text-lg font-semibold text-white">Error Analysis</h2>
             </div>
             <div className="bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full">
@@ -163,7 +131,8 @@ export default function AnalysisPage({ codeData }: AnalysisPageProps) {
                   initial={{ y: 10, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ delay: 0.3 + index * 0.05 }}
-                  className={`p-4 rounded-lg border transition-all hover:shadow-md ${
+                  whileHover={{ scale: 1.03, y: -3 }}
+                  className={`p-4 rounded-lg border-2 transition-all cursor-pointer ${
                     error.count > 0
                       ? 'bg-red-500/5 border-red-500/30 hover:border-red-500/50'
                       : 'bg-accent-green/5 border-accent-green/30 hover:border-accent-green/50'
@@ -171,9 +140,11 @@ export default function AnalysisPage({ codeData }: AnalysisPageProps) {
                 >
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex items-start gap-3 flex-1">
-                      <div className={`w-10 h-10 rounded-lg flex items-center justify-center font-bold text-lg flex-shrink-0 ${
-                        error.count > 0 ? 'bg-red-500/10 text-red-400' : 'bg-accent-green/10 text-accent-green'
-                      }`}>
+                      <div
+                        className={`w-10 h-10 rounded-lg flex items-center justify-center font-bold text-lg flex-shrink-0 ${
+                          error.count > 0 ? 'bg-red-500/10 text-red-400' : 'bg-accent-green/10 text-accent-green'
+                        }`}
+                      >
                         {error.icon}
                       </div>
                       <div className="flex-1">
@@ -255,10 +226,13 @@ export default function AnalysisPage({ codeData }: AnalysisPageProps) {
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.4 }}
-          className="bg-light-surface dark:bg-dark-surface border border-light-border dark:border-dark-border rounded-xl overflow-hidden shadow-lg"
+          whileHover={{ scale: 1.01 }}
+          className="bg-light-surface dark:bg-dark-surface border-2 border-light-border dark:border-dark-border rounded-xl overflow-hidden shadow-lg hover:border-accent-green transition-all"
         >
-          <div className="bg-accent-green px-4 py-3 flex items-center gap-2">
-            <Lightbulb className="w-5 h-5 text-white" />
+          <div className="bg-accent-cyan px-4 py-3 flex items-center gap-2">
+            <div>
+              <Lightbulb className="w-5 h-5 text-white" />
+            </div>
             <h2 className="text-lg font-semibold text-white">AI Recommendations</h2>
           </div>
 
@@ -270,9 +244,12 @@ export default function AnalysisPage({ codeData }: AnalysisPageProps) {
                   initial={{ x: -10, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
                   transition={{ delay: 0.5 + index * 0.1 }}
-                  className="flex items-start gap-3 p-4 rounded-lg bg-accent-green/5 border border-accent-green/20 hover:bg-accent-green/10 hover:border-accent-green/40 transition-all"
+                  whileHover={{ scale: 1.05, x: 5 }}
+                  className="flex items-start gap-3 p-4 rounded-lg bg-accent-green/5 border-2 border-accent-green/20 hover:bg-accent-green/10 hover:border-accent-green/40 transition-all cursor-pointer"
                 >
-                  <div className="w-8 h-8 rounded-full bg-accent-green text-white flex items-center justify-center text-sm font-bold flex-shrink-0">
+                  <div
+                    className="w-8 h-8 rounded-full bg-accent-cyan text-white flex items-center justify-center text-sm font-bold flex-shrink-0"
+                  >
                     {index + 1}
                   </div>
                   <p className="text-gray-900 dark:text-text-primary text-sm leading-relaxed">{recommendation}</p>

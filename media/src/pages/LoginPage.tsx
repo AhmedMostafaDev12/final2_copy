@@ -44,9 +44,9 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
           >
             {/* Try to load custom logo, fallback to Bot icon if not found */}
             <img
-              src="/logo.png"
+              src="/logo.svg"
               alt="ABCode Logo"
-              className="w-32 h-32 object-contain"
+              className="w-48 h-48 object-contain"
               onError={(e) => {
                 // If logo.png doesn't exist, hide image and show Bot icon instead
                 e.currentTarget.style.display = 'none';
@@ -55,25 +55,14 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
               }}
             />
             <div className="flex items-center justify-center" style={{ display: 'none' }}>
-              <Bot className="w-16 h-16 text-accent-teal" />
+              <Bot className="w-24 h-24 text-accent-teal" />
             </div>
           </div>
-          <h1
-            className="text-4xl font-bold text-gray-900 dark:text-text-primary mb-2"
-            style={{ fontFamily: "'Orbitron', sans-serif", letterSpacing: '0.05em', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.1em' }}
-          >
-            <span>ABCod</span>
-            <span style={{ display: 'inline-flex', flexDirection: 'column', gap: '0.18em', width: '0.55em', height: '0.78em', justifyContent: 'center' }}>
-              <span style={{ height: '0.09em', width: '100%', backgroundColor: 'currentColor', borderRadius: '0.02em' }}></span>
-              <span style={{ height: '0.09em', width: '100%', backgroundColor: 'currentColor', borderRadius: '0.02em' }}></span>
-              <span style={{ height: '0.09em', width: '100%', backgroundColor: 'currentColor', borderRadius: '0.02em' }}></span>
-            </span>
-          </h1>
         </div>
 
         {/* Login/Signup Card */}
         <div
-          className="bg-light-surface dark:bg-dark-surface border-2 border-light-border dark:border-dark-border rounded-none shadow-2xl overflow-hidden hover:border-accent-teal/30 transition-all"
+          className="bg-light-surface dark:bg-dark-surface border-2 border-light-border dark:border-dark-border rounded-lg shadow-2xl overflow-hidden hover:border-accent-teal/30 transition-all"
         >
           {/* Tab Switcher */}
           <div className="flex border-b border-light-border dark:border-dark-border">

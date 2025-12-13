@@ -64,7 +64,7 @@ export default function AnalysisPage({ codeData }: AnalysisPageProps) {
               <div className="flex items-center gap-2">
                 <CheckCircle className="w-5 h-5 text-accent-green" />
                 <p className="text-sm text-gray-900 dark:text-text-primary">
-                  <span className="font-semibold">✓ Loaded:</span> {fileName} ({codeData.language}) - {codeData.code.length} characters
+                  <span className="font-semibold">✓ Loaded:</span> {codeData.fileName} ({codeData.language}) - {codeData.code.length} characters
                 </p>
               </div>
             </motion.div>

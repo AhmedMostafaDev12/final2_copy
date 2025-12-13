@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { User, Mail, Bot, Calendar, Award, Settings, LogOut, X, Camera, Eye, EyeOff } from 'lucide-react';
+import { User, Mail, Calendar, Award, Settings, LogOut, X, Camera, Eye, EyeOff } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import { useState, useRef, useEffect } from 'react';
 import { fetchUserStats } from '../services/apiService';
@@ -147,7 +147,7 @@ export default function ProfilePage() {
               >
                 <div className="flex items-center gap-3 mb-2">
                   <div className="w-10 h-10 bg-accent-teal/10 rounded-lg flex items-center justify-center">
-                    <Bot className="w-5 h-5 text-accent-teal" />
+                    <img src="/analysisprof.svg" alt="Analysis" className="w-7 h-7" />
                   </div>
                   <div>
                     {loading ? (

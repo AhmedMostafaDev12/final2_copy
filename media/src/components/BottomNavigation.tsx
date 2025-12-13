@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Bug, User, MessageCircle, TrendingUp } from 'lucide-react';
+import { SearchCode, User, MessageCircle, TrendingUp } from 'lucide-react';
 
 type Page = 'analysis' | 'chatbot' | 'progress' | 'profile';
 
@@ -16,7 +16,7 @@ export default function BottomNavigation({ currentPage, onNavigate }: BottomNavi
     {
       id: 'analysis' as Page,
       label: 'Analysis',
-      icon: Bug,
+      icon: SearchCode,
       preview: 'View code analysis, errors, and AI recommendations',
       color: 'accent-teal',
     },
@@ -59,10 +59,14 @@ export default function BottomNavigation({ currentPage, onNavigate }: BottomNavi
               <div className="flex items-center gap-3 mb-2">
                 {navItems.find((item) => item.id === hoveredPage)?.icon && (
                   <div className={`w-10 h-10 bg-${navItems.find((item) => item.id === hoveredPage)?.color}/10 rounded-lg flex items-center justify-center`}>
-                    {(() => {
-                      const Icon = navItems.find((item) => item.id === hoveredPage)?.icon;
-                      return Icon ? <Icon className={`w-5 h-5 text-${navItems.find((item) => item.id === hoveredPage)?.color}`} /> : null;
-                    })()}
+                    {hoveredPage === 'analysis' ? (
+                      <img src="/analysis.svg" alt="Analysis" className="w-6 h-6" />
+                    ) : (
+                      (() => {
+                        const Icon = navItems.find((item) => item.id === hoveredPage)?.icon;
+                        return Icon ? <Icon className={`w-5 h-5 text-${navItems.find((item) => item.id === hoveredPage)?.color}`} /> : null;
+                      })()
+                    )}
                   </div>
                 )}
                 <h3 className="text-lg font-semibold text-text-primary">
@@ -152,11 +156,21 @@ export default function BottomNavigation({ currentPage, onNavigate }: BottomNavi
 
                   {/* Icon and Label */}
                   <div className="relative z-10 flex flex-col items-center gap-1">
-                    <Icon
-                      className={`w-6 h-6 transition-colors ${
-                        isActive ? 'text-white' : 'text-text-tertiary'
-                      }`}
-                    />
+                    {item.id === 'analysis' ? (
+                      <img
+                        src="/analysis.svg"
+                        alt="Analysis"
+                        className={`w-8 h-8 transition-opacity ${
+                          isActive ? 'opacity-100' : 'opacity-60'
+                        }`}
+                      />
+                    ) : (
+                      <Icon
+                        className={`w-6 h-6 transition-colors ${
+                          isActive ? 'text-white' : 'text-text-tertiary'
+                        }`}
+                      />
+                    )}
                     <span
                       className={`text-xs font-medium transition-colors ${
                         isActive ? 'text-white' : 'text-text-tertiary'

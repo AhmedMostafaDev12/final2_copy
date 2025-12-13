@@ -40,6 +40,12 @@ export interface CodeAnalysisCreate {
   recommendations?: string;
 }
 
+export interface UserStats {
+  total_analyses: number;
+  errors_fixed: number;
+  day_streak: number;
+}
+
 // Fetch progress data for a user
 export async function fetchProgressData(userId: string): Promise<ProgressData[]> {
   try {
@@ -114,6 +120,20 @@ export async function getAnalysis(analysisId: string): Promise<any> {
     return await response.json();
   } catch (error) {
     console.error('Error fetching analysis:', error);
+    return null;
+  }
+}
+
+// Fetch user profile statistics
+export async function fetchUserStats(userId: string): Promise<UserStats | null> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/analysis/user-stats/${userId}`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch user stats');
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching user stats:', error);
     return null;
   }
 }

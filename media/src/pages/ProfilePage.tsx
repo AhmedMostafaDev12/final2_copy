@@ -1,23 +1,51 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { User, Mail, Bot, Calendar, Award, Settings, LogOut, X, Camera, Eye, EyeOff } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
+import { fetchUserStats } from '../services/apiService';
 
 export default function ProfilePage() {
   const { theme, toggleTheme } = useTheme();
   const [isEditMode, setIsEditMode] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [loading, setLoading] = useState(true);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // TODO: Replace with actual user ID from authentication
+  const userId = "test-user";
 
   const [userStats, setUserStats] = useState({
     name: 'Developer',
     email: 'developer@abcode.com',
     joinDate: 'January 2025',
-    totalAnalyses: 47,
-    errorsSolved: 132,
-    streak: 12,
+    totalAnalyses: 0,
+    errorsSolved: 0,
+    streak: 0,
   });
+
+  useEffect(() => {
+    const loadUserStats = async () => {
+      setLoading(true);
+      try {
+        const stats = await fetchUserStats(userId);
+        if (stats) {
+          setUserStats(prev => ({
+            ...prev,
+            totalAnalyses: stats.total_analyses,
+            errorsSolved: stats.errors_fixed,
+            streak: stats.day_streak,
+          }));
+        }
+      } catch (error) {
+        console.error('Error loading user stats:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadUserStats();
+  }, [userId]);
 
   const [editForm, setEditForm] = useState({
     name: userStats.name,
@@ -122,7 +150,11 @@ export default function ProfilePage() {
                     <Bot className="w-5 h-5 text-accent-teal" />
                   </div>
                   <div>
-                    <p className="text-2xl font-bold text-gray-900 dark:text-text-primary">{userStats.totalAnalyses}</p>
+                    {loading ? (
+                      <div className="h-8 w-16 bg-light-border dark:bg-dark-border animate-pulse rounded"></div>
+                    ) : (
+                      <p className="text-2xl font-bold text-gray-900 dark:text-text-primary">{userStats.totalAnalyses}</p>
+                    )}
                     <p className="text-sm text-gray-600 dark:text-text-secondary">Analyses</p>
                   </div>
                 </div>
@@ -140,7 +172,11 @@ export default function ProfilePage() {
                     <Award className="w-5 h-5 text-accent-cyan" />
                   </div>
                   <div>
-                    <p className="text-2xl font-bold text-gray-900 dark:text-text-primary">{userStats.errorsSolved}</p>
+                    {loading ? (
+                      <div className="h-8 w-16 bg-light-border dark:bg-dark-border animate-pulse rounded"></div>
+                    ) : (
+                      <p className="text-2xl font-bold text-gray-900 dark:text-text-primary">{userStats.errorsSolved}</p>
+                    )}
                     <p className="text-sm text-gray-600 dark:text-text-secondary">Errors Fixed</p>
                   </div>
                 </div>
@@ -158,7 +194,11 @@ export default function ProfilePage() {
                     <Calendar className="w-5 h-5 text-accent-green" />
                   </div>
                   <div>
-                    <p className="text-2xl font-bold text-gray-900 dark:text-text-primary">{userStats.streak}</p>
+                    {loading ? (
+                      <div className="h-8 w-16 bg-light-border dark:bg-dark-border animate-pulse rounded"></div>
+                    ) : (
+                      <p className="text-2xl font-bold text-gray-900 dark:text-text-primary">{userStats.streak}</p>
+                    )}
                     <p className="text-sm text-gray-600 dark:text-text-secondary">Day Streak</p>
                   </div>
                 </div>

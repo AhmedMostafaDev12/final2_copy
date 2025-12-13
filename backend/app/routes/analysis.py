@@ -12,7 +12,8 @@ from app.schemas.code_analysis import (
     CodeAnalysisResponse,
     ProgressData,
     MonthlyErrorBreakdown,
-    HistoryItem
+    HistoryItem,
+    UserStats
 )
 
 router = APIRouter(prefix="/api/analysis", tags=["analysis"])
@@ -101,6 +102,61 @@ def get_analysis_history(user_id: str, limit: int = 10, db: Session = Depends(ge
         )
         for analysis in analyses
     ]
+
+@router.get("/user-stats/{user_id}", response_model=UserStats)
+def get_user_stats(user_id: str, db: Session = Depends(get_db)):
+    """Get user profile statistics"""
+    from datetime import timedelta, date
+
+    # Get all analyses for the user
+    analyses = db.query(CodeAnalysis).filter(
+        CodeAnalysis.user_id == user_id
+    ).order_by(CodeAnalysis.created_at).all()
+
+    # Calculate total analyses
+    total_analyses = len(analyses)
+
+    # Calculate total errors fixed (sum of all error fields)
+    errors_fixed = sum(
+        analysis.bracket_errors +
+        analysis.comma_errors +
+        analysis.indentation_errors +
+        analysis.case_spelling_errors +
+        analysis.colon_errors +
+        analysis.other_errors
+        for analysis in analyses
+    )
+
+    # Calculate day streak (consecutive days with at least 1 analysis)
+    if not analyses:
+        day_streak = 0
+    else:
+        # Get unique dates (only the date part, not time)
+        analysis_dates = sorted(set(
+            analysis.created_at.date() for analysis in analyses
+        ), reverse=True)
+
+        # Calculate streak starting from today
+        today = date.today()
+        streak = 0
+        current_date = today
+
+        for analysis_date in analysis_dates:
+            # Check if this date is consecutive
+            if analysis_date == current_date:
+                streak += 1
+                current_date -= timedelta(days=1)
+            elif analysis_date < current_date:
+                # Gap found, break
+                break
+
+        day_streak = streak
+
+    return UserStats(
+        total_analyses=total_analyses,
+        errors_fixed=errors_fixed,
+        day_streak=day_streak
+    )
 
 @router.get("/{analysis_id}", response_model=CodeAnalysisResponse)
 def get_analysis(analysis_id: str, db: Session = Depends(get_db)):

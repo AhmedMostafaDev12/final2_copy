@@ -40,3 +40,8 @@ class HistoryItem(BaseModel):
     language: str
     total_errors: int
     code_preview: str
+
+class UserStats(BaseModel):
+    total_analyses: int
+    errors_fixed: int
+    day_streak: int

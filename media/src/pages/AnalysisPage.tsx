@@ -113,9 +113,7 @@ export default function AnalysisPage({ codeData }: AnalysisPageProps) {
         >
           <div className="bg-accent-teal px-4 py-3 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div>
-                <img src="/analysis.svg" alt="Analysis" className="w-5 h-5" />
-              </div>
+              <img src="/analysis.svg" alt="Analysis" className="w-5 h-5" />
               <h2 className="text-lg font-semibold text-white">Error Analysis</h2>
             </div>
             <div className="bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full">
